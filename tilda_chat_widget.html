@@ -1,0 +1,261 @@
+<!-- Чат-виджет для World Class Fitness Club -->
+<style>
+.chat-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 350px;
+    height: 500px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+    display: none;
+    flex-direction: column;
+    z-index: 9999;
+    font-family: 'Arial', sans-serif;
+}
+
+.chat-widget.active {
+    display: flex;
+}
+
+.chat-header {
+    padding: 15px;
+    background: linear-gradient(135deg, #d4145a 0%, #fbb03b 100%);
+    color: white;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chat-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    background: #f5f5f5;
+}
+
+.message {
+    margin-bottom: 10px;
+    max-width: 80%;
+    padding: 10px;
+    border-radius: 10px;
+    word-wrap: break-word;
+}
+
+.message.user {
+    background: #E3E3E3;
+    margin-left: auto;
+}
+
+.message.bot {
+    background: linear-gradient(135deg, #d4145a 0%, #fbb03b 100%);
+    color: white;
+}
+
+.chat-input {
+    padding: 15px;
+    border-top: 1px solid #eee;
+    display: flex;
+    background: white;
+    border-radius: 0 0 15px 15px;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    margin-right: 10px;
+    outline: none;
+}
+
+.chat-input button {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #d4145a 0%, #fbb03b 100%);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.chat-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #d4145a 0%, #fbb03b 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    z-index: 9999;
+    transition: transform 0.3s;
+    color: white;
+    font-weight: bold;
+}
+
+.chat-button:hover {
+    transform: scale(1.1);
+}
+
+.typing-indicator {
+    display: none;
+    padding: 10px 15px;
+    background: #f1f3f5;
+    border-radius: 18px;
+    align-self: flex-start;
+    color: #666;
+    font-style: italic;
+}
+
+@media (max-width: 480px) {
+    .chat-widget {
+        width: 100%;
+        height: 100%;
+        bottom: 0;
+        right: 0;
+        border-radius: 0;
+    }
+
+    .chat-header {
+        border-radius: 0;
+    }
+
+    .chat-button {
+        bottom: 10px;
+        right: 10px;
+    }
+}
+</style>
+
+<!-- Кнопка открытия -->
+<div class="chat-button" onclick="toggleChat()">
+    •••
+</div>
+
+<!-- Окно чата -->
+<div class="chat-widget" id="chatWidget">
+    <div class="chat-header">
+        <h3>World Class AI</h3>
+        <span style="cursor: pointer;" onclick="toggleChat()">✕</span>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+            Здравствуйте! Я ваш ассистент фитнес-клуба World Class. Чем могу помочь?
+        </div>
+    </div>
+    <div class="typing-indicator" id="typingIndicator">
+        Ассистент печатает...
+    </div>
+    <div class="chat-input">
+        <input type="text" id="messageInput" placeholder="Напишите ваше сообщение..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()">→</button>
+    </div>
+</div>
+
+<script>
+// ---> Укажи URL Flask API <---
+const API_URL = 'https://ced17de233c6.ngrok-free.app/website-chat';
+
+// Уникальный ID пользователя
+const USER_ID = 'worldclass_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+let isOpen = false;
+
+function toggleChat() {
+    const widget = document.getElementById('chatWidget');
+    const toggle = document.querySelector('.chat-button');
+
+    isOpen = !isOpen;
+
+    if (isOpen) {
+        widget.style.display = 'flex';
+        toggle.style.display = 'none';
+        document.getElementById('messageInput').focus();
+    } else {
+        widget.style.display = 'none';
+        toggle.style.display = 'flex';
+    }
+}
+
+function handleKeyPress(event) {
+    if (event.key === 'Enter') {
+        sendMessage();
+    }
+}
+
+async function sendMessage() {
+    const input = document.getElementById('messageInput');
+    const message = input.value.trim();
+    if (!message) return;
+
+    addMessage(message, 'user');
+    input.value = '';
+    showTyping(true);
+
+    const sendBtn = document.querySelector('.chat-input button');
+    sendBtn.disabled = true;
+
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'ngrok-skip-browser-warning': 'true'
+            },
+            body: JSON.stringify({
+                message: message,
+                user_id: USER_ID
+            })
+        });
+
+        const data = await response.json();
+        showTyping(false);
+
+        if (data.response) {
+            addMessage(data.response, 'bot');
+        } else {
+            addMessage('Извините, произошла ошибка. Попробуйте позже.', 'bot');
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        showTyping(false);
+        addMessage('Не удалось подключиться к серверу. Попробуйте позже.', 'bot');
+    } finally {
+        sendBtn.disabled = false;
+    }
+}
+
+function addMessage(text, sender) {
+    const messagesContainer = document.getElementById('chatMessages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}`;
+    messageDiv.textContent = text;
+    messagesContainer.appendChild(messageDiv);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function showTyping(show) {
+    const indicator = document.getElementById('typingIndicator');
+    indicator.style.display = show ? 'block' : 'none';
+    if (show) {
+        document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('World Class Chat Widget запущен');
+    console.log('Server URL:', API_URL);
+    console.log('User ID:', USER_ID);
+});
+</script>
