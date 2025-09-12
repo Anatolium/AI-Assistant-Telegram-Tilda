@@ -1,0 +1,8 @@
+version: "2"
+authtoken: <ngrok token>
+update_channel: stable
+tunnels:
+  flask-app:
+    proto: http
+    addr: 5000
+    inspect: false
