@@ -1,11 +1,8 @@
 import os
 import requests
-import pytz
 from dotenv import load_dotenv
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-import openai
-import json
 from datetime import datetime
 import time
 import logging
@@ -101,7 +98,7 @@ def save_application_to_sheets(data: dict):
         logger.info(f"Attempting to save to Google Sheets: {data}")
         row = [
             data.get('name', ''),
-            data.get('phone', ''),
+            "'" + data.get('phone', ''),
             data.get('service', ''),
             data.get('date', ''),
             data.get('master', ''),

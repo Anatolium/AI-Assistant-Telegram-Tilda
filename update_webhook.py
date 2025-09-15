@@ -31,7 +31,7 @@ def get_ngrok_url():
 def main():
     # Загружаем переменные окружения
     load_dotenv()
-    TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+    telegram_bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
     # Получаем URL ngrok
     logger.info("Получаем URL ngrok...")
     ngrok_url = get_ngrok_url()
@@ -42,7 +42,7 @@ def main():
     webhook_url = f"{ngrok_url}/"
     logger.info(f"Webhook URL: {webhook_url}")
     # Обновляем webhook
-    telegram_url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/setWebhook"
+    telegram_url = f"https://api.telegram.org/bot{telegram_bot_token}/setWebhook"
     response = requests.post(telegram_url, json={"url": webhook_url})
     if response.status_code == 200:
         logger.info("Webhook успешно обновлен")

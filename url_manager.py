@@ -74,9 +74,3 @@ if __name__ == '__main__':
         logger.info(f"Updated base URL to: {ngrok_url}")
     else:
         logger.error("Failed to get ngrok URL")
-
-
-
-
-
-
