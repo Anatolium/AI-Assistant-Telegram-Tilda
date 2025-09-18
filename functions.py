@@ -74,7 +74,7 @@ initialize_sheets()
 
 # --- ИНИЦИАЛИЗАЦИЯ TELEGRAM ---
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
-ADMIN_CHAT_ID = os.getenv('ADMIN_CHAT_ID')
+TELEGRAM_GROUP_ID = os.getenv('TELEGRAM_GROUP_ID')
 TELEGRAM_API_URL = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}'
 
 # --- ХРАНЕНИЕ THREAD_ID ДЛЯ КАЖДОГО ПОЛЬЗОВАТЕЛЯ ---
@@ -133,7 +133,7 @@ def send_admin_notification(text: str):
     try:
         url = f"{TELEGRAM_API_URL}/sendMessage"
         payload = {
-            'chat_id': ADMIN_CHAT_ID,
+            'chat_id': TELEGRAM_GROUP_ID,
             'text': text,
             'parse_mode': "HTML"
         }

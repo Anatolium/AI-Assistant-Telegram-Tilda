@@ -88,6 +88,7 @@ def save_booking_data(name, phone, service, datetime, master_category, comments=
 Услуга: {booking_data['service']}
 Дата: {booking_data['date']}
 Мастер: {booking_data['master']}
+Комментарий: {booking_data['comment']}
         """
         send_admin_notification(admin_text.strip())
 
@@ -100,6 +101,7 @@ def save_booking_data(name, phone, service, datetime, master_category, comments=
 Услуга: {booking_data['service']}
 Дата: {booking_data['date']}
 Мастер: {booking_data['master']}
+Комментарий: {booking_data['comment']}
 
 Мы свяжемся с вами в ближайшее время для подтверждения записи!
         """.strip()
