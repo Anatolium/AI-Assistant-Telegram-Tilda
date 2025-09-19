@@ -1,0 +1,41 @@
+{
+  "name": "save_booking_data",
+  "description": "Сохраняет данные записи клиента в Google Sheets",
+  "strict": false,
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Имя клиента"
+      },
+      "phone": {
+        "type": "string",
+        "description": "Номер телефона клиента"
+      },
+      "service": {
+        "type": "string",
+        "description": "Название услуги (Групповая тренировка/Персональный тренер/Семейная группа/SPA)"
+      },
+      "datetime": {
+        "type": "string",
+        "description": "Дата и время записи"
+      },
+      "master_category": {
+        "type": "string",
+        "description": "Категория тренера (Начинающий / Опытный / Топ-Тренер / Специалист по направлению)"
+      },
+      "comments": {
+        "type": "string",
+        "description": "Дополнительные комментарии клиента"
+      }
+    },
+    "required": [
+      "name",
+      "phone",
+      "service",
+      "datetime",
+      "master_category"
+    ]
+  }
+}
